@@ -1,4 +1,4 @@
-FROM ubuntu:24.04
+FROM nvidia/cuda:12.6.3-devel-ubuntu24.04
 
 RUN apt update
 RUN DEBIAN_FRONTEND=noninteractive apt install -y apt-utils sudo locales vim git iputils-ping net-tools rename openssh-server
@@ -11,6 +11,7 @@ RUN apt install -y python3 python3-pip ruby zstd wget curl
 RUN apt update
 #RUN DEBIAN_FRONTEND=noninteractive apt install -y qtcreator qtbase5-dev
 #RUN apt install -y geany
+RUN DEBIAN_FRONTEND=noninteractive apt install -y cuda-drivers nvidia-cuda-toolkit
 
 ARG UID
 ARG GID
