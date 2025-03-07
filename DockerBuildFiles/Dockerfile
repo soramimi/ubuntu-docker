@@ -32,6 +32,9 @@ RUN locale-gen
 COPY ./default_locale /etc/default/locale
 COPY ./environment /etc/
 
+COPY ./minio.deb /root/
+RUN apt install /root/minio.deb
+
 COPY ./cmd /tmp/
 CMD ["/bin/sh", "/tmp/cmd"]
 
