@@ -8,19 +8,28 @@ SSHPORT := 65522
 PASSWORD :=
 
 
-PROJNAME := Example
-PROJHOME := `realpath ../../${PROJNAME}`
+PROJHOME = $(shell realpath .)
+PROJNAME = $(shell basename ${PROJHOME})
 
+
+#GPUS_ALL := --gpus all
+
+#---
+
+SSHD =
 COMMAND =
 ifeq (${PASSWORD},)
 	COMMAND = sleep
 else
 	COMMAND = sshd
+	SSHD = -p ${SSHPORT}:${SSHPORT} -e SSHPORT=${SSHPORT}
 endif
+
+#---
 
 all:
 
-run-example: down
+run: down
 	make _run RUN="uname -a"
 
 required:
@@ -32,12 +41,15 @@ build:
 up: home srv home/.bashrc home/.profile 
 	echo ${UNAME}:${PASSWORD} >./home/.password
 	echo CONTAINER_NAME=${NAME} >./home/.container.sh
-	docker run --gpus all --name ${NAME} -d -p ${SSHPORT}:${SSHPORT} -v ./srv:/srv -v ./home:${HOMEDIR} -e UNAME=${UNAME} -e GNAME=${GNAME} -e UID=${UID} -e GID=${GID} -e HOMEDIR=${HOMEDIR} -e CONTAINER_NAME=${NAME} -e COMMAND=${COMMAND} -e SSHPORT=${SSHPORT} ${NAME}
+	docker run ${GPUS_ALL} --name ${NAME} -d -v ./srv:/srv -v ./home:${HOMEDIR} -e UNAME=${UNAME} -e GNAME=${GNAME} -e UID=${UID} -e GID=${GID} -e HOMEDIR=${HOMEDIR} -e CONTAINER_NAME=${NAME} -e COMMAND=${COMMAND} ${SSHD} ${NAME}
 
 _run: home home/.bashrc home/.profile 
-	echo ${RUN} >home/run.sh
+	@echo echo --->home/._run.sh
+	@echo ${RUN} >>home/._run.sh
+	@echo echo --->>home/._run.sh
 	echo CONTAINER_NAME=${NAME} >./home/.container.sh
 	docker run --device /dev/fuse --privileged --name ${NAME} --rm -v ${PROJHOME}:/${PROJNAME} -v ./home:${HOMEDIR} -e UNAME=${UNAME} -e GNAME=${GNAME} -e UID=${UID} -e GID=${GID} -e HOMEDIR=${HOMEDIR} -e CONTAINER_NAME=${NAME} -e COMMAND=run ${NAME}
+	-@rm -f home/._run.sh
 
 home:
 	-mkdir home
@@ -52,8 +64,8 @@ home/.profile:
 	cp DockerBuildFiles/_profile ./home/.profile
 
 down:
-	-docker kill ${NAME}
-	-docker rm ${NAME}
+	-docker kill ${NAME} 2>/dev/null
+	-docker rm ${NAME} 2>/dev/null
 
 sh:
 	docker exec -it ${NAME} /usr/bin/su ${UNAME}
