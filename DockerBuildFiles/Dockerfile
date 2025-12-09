@@ -32,6 +32,13 @@ RUN locale-gen
 COPY ./default_locale /etc/default/locale
 COPY ./environment /etc/
 
+RUN apt install -y postgresql
+ARG PG_POSTGRES_PASS
+ARG PG_USER_NAME
+ARG PG_USER_PASS
+COPY ./sql.sh /root/
+RUN bash /root/sql.sh
+
 COPY ./cmd /tmp/
 CMD ["/bin/sh", "/tmp/cmd"]
 

@@ -7,6 +7,9 @@ HOMEDIR := /home/${UNAME}
 SSHPORT := 65522
 PASSWORD :=
 
+PG_POSTGRES_PASS := qwerty123
+PG_USER_NAME := user
+PG_USER_PASS := pass
 
 PROJHOME = $(shell realpath .)
 PROJNAME = $(shell basename ${PROJHOME})
@@ -36,7 +39,7 @@ required:
 	# sudo pacman -S nvidia-container-toolkit
 
 build:
-	cd DockerBuildFiles && docker buildx build . --build-arg UNAME=${UNAME} --build-arg GNAME=${GNAME} --build-arg UID=${UID} --build-arg GID=${GID} --build-arg HOMEDIR=${HOMEDIR} -t ${NAME}
+	cd DockerBuildFiles && docker buildx build . --build-arg UNAME=${UNAME} --build-arg GNAME=${GNAME} --build-arg UID=${UID} --build-arg GID=${GID} --build-arg HOMEDIR=${HOMEDIR} -t ${NAME} --build-arg PG_POSTGRES_PASS=${PG_POSTGRES_PASS} --build-arg PG_USER_NAME=${PG_USER_NAME} --build-arg PG_USER_PASS=${PG_USER_PASS}
 
 up: home srv home/.bashrc home/.profile 
 	echo ${UNAME}:${PASSWORD} >./home/.password
