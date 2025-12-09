@@ -12,6 +12,7 @@ RUN apt install -y python3 python3-pip ruby zstd wget curl
 RUN apt update
 #RUN DEBIAN_FRONTEND=noninteractive apt install -y qtcreator qtbase5-dev
 #RUN apt install -y geany
+RUN apt install -y postgresql 
 
 ARG UID
 ARG GID
@@ -32,12 +33,13 @@ RUN locale-gen
 COPY ./default_locale /etc/default/locale
 COPY ./environment /etc/
 
-RUN apt install -y postgresql
 ARG PG_POSTGRES_PASS
 ARG PG_USER_NAME
 ARG PG_USER_PASS
-COPY ./sql.sh /root/
-RUN bash /root/sql.sh
+RUN mkdir -p /root/postgresql
+COPY ./postgresql/postgresql.conf /root/postgresql
+COPY ./postgresql/pg_hba.conf /root/postgresql
+COPY ./postgresql/initdb.sh /root/postgresql
 
 COPY ./cmd /tmp/
 CMD ["/bin/sh", "/tmp/cmd"]

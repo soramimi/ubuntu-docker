@@ -39,12 +39,13 @@ required:
 	# sudo pacman -S nvidia-container-toolkit
 
 build:
+	-mkdir postgresql
 	cd DockerBuildFiles && docker buildx build . --build-arg UNAME=${UNAME} --build-arg GNAME=${GNAME} --build-arg UID=${UID} --build-arg GID=${GID} --build-arg HOMEDIR=${HOMEDIR} -t ${NAME} --build-arg PG_POSTGRES_PASS=${PG_POSTGRES_PASS} --build-arg PG_USER_NAME=${PG_USER_NAME} --build-arg PG_USER_PASS=${PG_USER_PASS}
 
 up: home srv home/.bashrc home/.profile 
 	echo ${UNAME}:${PASSWORD} >./home/.password
 	echo CONTAINER_NAME=${NAME} >./home/.container.sh
-	docker run ${GPUS_ALL} --name ${NAME} -d -v ./srv:/srv -v ./home:${HOMEDIR} -e UNAME=${UNAME} -e GNAME=${GNAME} -e UID=${UID} -e GID=${GID} -e HOMEDIR=${HOMEDIR} -e CONTAINER_NAME=${NAME} -e COMMAND=${COMMAND} ${SSHD} ${NAME}
+	docker run ${GPUS_ALL} --name ${NAME} -d -p 5432:5432 -v ./srv:/srv -v ./home:${HOMEDIR} -e UNAME=${UNAME} -e GNAME=${GNAME} -e UID=${UID} -e GID=${GID} -e HOMEDIR=${HOMEDIR} -e CONTAINER_NAME=${NAME} -e COMMAND=${COMMAND} ${SSHD} ${NAME}
 
 _run: home home/.bashrc home/.profile 
 	@echo echo --->home/._run.sh
@@ -78,4 +79,8 @@ root:
 
 ssh:
 	ssh -XC localhost -p ${SSHPORT}
+
+initdb: down
+	sudo rm -fr postgresql
+	tar zxvf DockerBuildFiles/postgresql.tar.gz
 
