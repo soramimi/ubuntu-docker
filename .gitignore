@@ -1,3 +1,4 @@
 opt/
 home/
 postgresql/
+*.user
