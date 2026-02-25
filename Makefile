@@ -45,7 +45,7 @@ build:
 up: home srv home/.bashrc home/.profile 
 	echo ${UNAME}:${PASSWORD} >./home/.password
 	echo CONTAINER_NAME=${NAME} >./home/.container.sh
-	docker run ${GPUS_ALL} --name ${NAME} -d -p 5432:5432 -v ./srv:/srv -v ./home:${HOMEDIR} -e UNAME=${UNAME} -e GNAME=${GNAME} -e UID=${UID} -e GID=${GID} -e HOMEDIR=${HOMEDIR} -e CONTAINER_NAME=${NAME} -e COMMAND=${COMMAND} ${SSHD} ${NAME}
+	docker run ${GPUS_ALL} --name ${NAME} -d -p 5432:5432 -v ./srv:/srv -v ./postgresql:/var/lib/postgresql -v ./home:${HOMEDIR} -e UNAME=${UNAME} -e GNAME=${GNAME} -e UID=${UID} -e GID=${GID} -e HOMEDIR=${HOMEDIR} -e CONTAINER_NAME=${NAME} -e COMMAND=${COMMAND} ${SSHD} ${NAME}
 
 _run: home home/.bashrc home/.profile 
 	@echo echo --->home/._run.sh

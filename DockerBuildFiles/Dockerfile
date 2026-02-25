@@ -39,8 +39,7 @@ ARG PG_USER_PASS
 RUN mkdir -p /root/postgresql
 COPY ./postgresql/postgresql.conf /root/postgresql
 COPY ./postgresql/pg_hba.conf /root/postgresql
-COPY ./postgresql/initdb.sh /root/postgresql
-COPY ./root/Makefile /root/
+COPY ./postgresql/Makefile /root/postgresql
 
 COPY ./cmd /tmp/
 CMD ["/bin/sh", "/tmp/cmd"]
