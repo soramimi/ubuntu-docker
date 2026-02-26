@@ -2,3 +2,4 @@ opt/
 home/
 postgresql/
 *.user
+*.sln

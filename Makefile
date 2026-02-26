@@ -80,7 +80,3 @@ root:
 ssh:
 	ssh -XC localhost -p ${SSHPORT}
 
-initdb: down
-	sudo rm -fr postgresql
-	tar zxvf DockerBuildFiles/postgresql.tar.gz
-
